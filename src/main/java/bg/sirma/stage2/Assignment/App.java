@@ -16,10 +16,17 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+/**
+ * 
+ * @author Deyan Gigov
+ * @version 2.0
+ *
+ */
 public class App {
 
     private static HashMap<String, Integer> hashMapPair = new HashMap<>();
 
+    // Get String lines and make a employer
     private static Employer[] stringToEmployer(List<String> lines) {
 
         Employer employers[] = new Employer[lines.size()];
@@ -36,8 +43,10 @@ public class App {
                 String[] employerComponents = line.split(",");
                 empID = Integer.parseInt(employerComponents[0]);
                 projectID = Integer.parseInt(employerComponents[1]);
-                dateFrom = (employerComponents[2].equals("NULL")) ? new LocalDate() : formatter.parseLocalDate(employerComponents[2]);
-                dateTo = (employerComponents[3].equals("NULL")) ? new LocalDate() : formatter.parseLocalDate(employerComponents[3]);
+                dateFrom = (employerComponents[2].equals("NULL")) ? new LocalDate()
+                        : formatter.parseLocalDate(employerComponents[2]);
+                dateTo = (employerComponents[3].equals("NULL")) ? new LocalDate()
+                        : formatter.parseLocalDate(employerComponents[3]);
                 Employer employer = new Employer(empID, projectID, dateFrom, dateTo);
                 employers[i] = employer;
                 i++;
@@ -46,6 +55,7 @@ public class App {
         return employers;
     }
 
+    // Sort all data by project id
     private static HashMap<Integer, List<Employer>> mapOfProjects(List<Employer> lines) {
         HashMap<Integer, List<Employer>> hashMap = new HashMap<>();
         for (Employer line : lines) {
@@ -59,7 +69,7 @@ public class App {
         }
         return hashMap;
     }
-
+    //Generate all combinations of pairs for every project
     private static void allPairsOfEmployers(HashMap<Integer, List<Employer>> hashMap) {
 
         int r = 2;
@@ -79,12 +89,11 @@ public class App {
         // A temporary array to store all combination one by one
         List<Employer> tempList = new ArrayList<>(r);
 
-        // Print all combination using temprary array 'data[]'
+        // Print all combination using temprary array 'tempList'
         combinationUtil(arr, tempList, 0, n - 1, 0, r);
     }
 
-    private static void combinationUtil(List<Employer> arr, List<Employer> data, int start, int end, int index,
-            int r) {
+    private static void combinationUtil(List<Employer> arr, List<Employer> data, int start, int end, int index, int r) {
 
         if (index == r) {
             for (int j = 0; j < r; j++)
@@ -97,7 +106,7 @@ public class App {
             LocalDate d3 = second.getDateFrom();
             LocalDate d4 = second.getDateTo();
             String pairsIds = String.valueOf(first.getEmpID()) + "-" + String.valueOf(second.getEmpID());
-            // TODO equals dates
+            
             if (d1.isBefore(d3) && d2.isAfter(d3) && d4.isBefore(d2)) {
                 daysWorkingTogether = Days.daysBetween(d3, d4).getDays();
             } else if (d1.isBefore(d3) && d2.isAfter(d3) && d4.isAfter(d2)) {
@@ -109,11 +118,11 @@ public class App {
             }
             System.out.print("Days Working Together: " + daysWorkingTogether);
             System.out.println(" ");
+            //Тhe sum of the days worked together in other projects
             if (hashMapPair.containsKey(pairsIds)) {
                 daysWorkingTogether += hashMapPair.get(pairsIds);
             }
             hashMapPair.put(pairsIds, daysWorkingTogether);
-
             return;
         }
         for (int i = start; i <= end && end - i + 1 >= r - index; i++) {
@@ -122,7 +131,7 @@ public class App {
             combinationUtil(arr, data, i + 1, end, index + 1, r);
         }
     }
-
+    //Find the biggest value in the map.
     private static void solution(HashMap<String, Integer> map) {
         Map.Entry<String, Integer> maxEntry = null;
 
@@ -154,7 +163,7 @@ public class App {
             }
 
             allPairsOfEmployers(mapProject);
-            
+
         } catch (IOException e) {
             System.out.println(e);
         }
